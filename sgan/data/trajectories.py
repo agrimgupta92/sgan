@@ -35,7 +35,8 @@ def seq_collate(data):
 
     return tuple(out)
 
-
+#this function reads the content of each file
+#each file has 4 columns: frame #  | pedestrian id | x pos | y pos
 def read_file(_path, delim='\t'):
     data = []
     if delim == 'tab':
@@ -59,9 +60,9 @@ def poly_fit(traj, traj_len, threshold):
     Output:
     - int: 1 -> Non Linear 0-> Linear
     """
-    t = np.linspace(0, traj_len - 1, traj_len)
-    res_x = np.polyfit(t, traj[0, -traj_len:], 2, full=True)[1]
-    res_y = np.polyfit(t, traj[1, -traj_len:], 2, full=True)[1]
+    t = np.linspace(0, traj_len - 1, traj_len) #linspace(start, stop, number)
+    res_x = np.polyfit(t, traj[0, -traj_len:], 2, full=True)[1] #returns residual for a polynomial fit for x pos
+    res_y = np.polyfit(t, traj[1, -traj_len:], 2, full=True)[1] #same for y pos
     if res_x + res_y >= threshold:
         return 1.0
     else:
@@ -95,7 +96,7 @@ class TrajectoryDataset(Dataset):
         self.seq_len = self.obs_len + self.pred_len
         self.delim = delim
 
-        all_files = os.listdir(self.data_dir)
+        all_files = os.listdir(self.data_dir) #listing all files in a directory
         all_files = [os.path.join(self.data_dir, _path) for _path in all_files]
         num_peds_in_seq = []
         seq_list = []
@@ -104,34 +105,34 @@ class TrajectoryDataset(Dataset):
         non_linear_ped = []
         for path in all_files:
             data = read_file(path, delim)
-            frames = np.unique(data[:, 0]).tolist()
+            frames = np.unique(data[:, 0]).tolist() #gets unique list of frame # s per file
             frame_data = []
             for frame in frames:
-                frame_data.append(data[frame == data[:, 0], :])
+                frame_data.append(data[frame == data[:, 0], :]) #gets all data per frame
             num_sequences = int(
-                math.ceil((len(frames) - self.seq_len + 1) / skip))
+                math.ceil((len(frames) - self.seq_len + 1) / skip)) #passes a sliding window of size seq_len with skip to create sequences
 
-            for idx in range(0, num_sequences * self.skip + 1, skip):
+            for idx in range(0, num_sequences * self.skip + 1, skip): #for each window of sequence
                 curr_seq_data = np.concatenate(
                     frame_data[idx:idx + self.seq_len], axis=0)
-                peds_in_curr_seq = np.unique(curr_seq_data[:, 1])
+                peds_in_curr_seq = np.unique(curr_seq_data[:, 1]) #pedestrian ids per sequence (of frames)
                 curr_seq_rel = np.zeros((len(peds_in_curr_seq), 2,
-                                         self.seq_len))
+                                         self.seq_len)) #speed of individual pedestrians
                 curr_seq = np.zeros((len(peds_in_curr_seq), 2, self.seq_len))
                 curr_loss_mask = np.zeros((len(peds_in_curr_seq),
                                            self.seq_len))
-                num_peds_considered = 0
+                num_peds_considered = 0 # #pedestrians modeled per sequence
                 _non_linear_ped = []
-                for _, ped_id in enumerate(peds_in_curr_seq):
+                for _, ped_id in enumerate(peds_in_curr_seq): #construct the data for each ped id
                     curr_ped_seq = curr_seq_data[curr_seq_data[:, 1] ==
                                                  ped_id, :]
-                    curr_ped_seq = np.around(curr_ped_seq, decimals=4)
-                    pad_front = frames.index(curr_ped_seq[0, 0]) - idx
-                    pad_end = frames.index(curr_ped_seq[-1, 0]) - idx + 1
-                    if pad_end - pad_front != self.seq_len:
+                    curr_ped_seq = np.around(curr_ped_seq, decimals=4) #frame, ped_id, xpos, ypos
+                    pad_front = frames.index(curr_ped_seq[0, 0]) - idx #first frame for ped_id
+                    pad_end = frames.index(curr_ped_seq[-1, 0]) - idx + 1 #last frame for ped_id
+                    if pad_end - pad_front != self.seq_len: #if len(curr_ped_seq) < seq_len don't add
                         continue
                     curr_ped_seq = np.transpose(curr_ped_seq[:, 2:])
-                    curr_ped_seq = curr_ped_seq
+                    curr_ped_seq = curr_ped_seq #matrix: xpos row, ypos row for each pedestrian id
                     # Make coordinates relative
                     rel_curr_ped_seq = np.zeros(curr_ped_seq.shape)
                     rel_curr_ped_seq[:, 1:] = \
