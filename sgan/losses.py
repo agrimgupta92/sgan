@@ -101,7 +101,7 @@ def final_displacement_error(
     """
     Input:
     - pred_pos: Tensor of shape (batch, 2). Predicted last pos.
-    - pred_pos_gt: Tensor of shape (seq_len, batch, 2). Groud truth
+    - pred_pos_gt: Tensor of shape (batch, 2). Groud truth
     last pos
     - consider_ped: Tensor of shape (batch)
     Output:
