@@ -14,7 +14,7 @@ def bce_loss(input, target):
 
     Output:
     - A PyTorch Tensor containing the mean BCE loss over the minibatch of
-      input data.
+    input data.
     """
     neg_abs = -input.abs()
     loss = input.clamp(min=0) - input * target + (1 + neg_abs.exp()).log()
