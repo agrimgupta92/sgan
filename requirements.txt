@@ -3,5 +3,5 @@ numpy==1.14.5
 Pillow==6.2.0
 pkg-resources==0.0.0
 six==1.11.0
-torch==0.4.0
+torch==1.13.1
 torchvision==0.2.1
