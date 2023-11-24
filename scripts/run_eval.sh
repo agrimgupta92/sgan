@@ -1,0 +1,1 @@
+python3 evaluate_model.py --model_path ../models/sgan-models
