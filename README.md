@@ -47,16 +47,19 @@ You can setup a virtual conda environment to run the code like this:
 ```bash
 conda create -n test python=3.10 -y               # Create a virtual environment
 conda activate test                               # Activate virtual environment
-pip install -r requirements.txt                   # Install dependencies
 # Work for a while ...
 conda deactivate  # Exit virtual environment
 ```
 
-## Pretrained Models
-You can download pretrained models by running the script `bash scripts/download_models.sh`. This will download the following models:
+## clone repo and download files
 
-- `sgan-models/<dataset_name>_<pred_len>.pt`: Contains 10 pretrained models for all five datasets. These models correspond to SGAN-20V-20 in Table 1.
-- `sgan-p-models/<dataset_name>_<pred_len>.pt`: Contains 10 pretrained models for all five datasets. These models correspond to SGAN-20VP-20 in Table 1.
+```bash
+git clone https://github.com/bharath5673/Social-GAN.git
+cd Social-GAN
+pip install -r requirements.txt   # Install dependencies
+sh scripts/download_data.sh
+sh scripts/download_models.sh
+```
 
 Please refer to [Model Zoo](MODEL_ZOO.md) for results.
 
