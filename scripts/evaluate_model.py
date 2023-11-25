@@ -4,6 +4,9 @@ import torch
 
 from attrdict import AttrDict
 
+import sys
+sys.path.append('../')
+
 from sgan.data.loader import data_loader
 from sgan.models import TrajectoryGenerator
 from sgan.losses import displacement_error, final_displacement_error

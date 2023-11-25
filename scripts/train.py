@@ -11,6 +11,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
+
+import sys
+sys.path.append('../')
 from sgan.data.loader import data_loader
 from sgan.losses import gan_g_loss, gan_d_loss, l2_loss
 from sgan.losses import displacement_error, final_displacement_error
@@ -109,7 +112,7 @@ def get_dtypes(args):
 
 
 def main(args):
-    os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_num
+    # os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_num
     train_path = get_dset_path(args.dataset_name, 'train')
     val_path = get_dset_path(args.dataset_name, 'val')
 

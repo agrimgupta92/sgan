@@ -40,24 +40,26 @@ Our model consists of three key components: Generator (G), Pooling Module (PM) a
 </div>
 
 ## Setup
-All code was developed and tested on Ubuntu 16.04 with Python 3.5 and PyTorch 0.4.
+All code was developed and tested on Ubuntu 22.04 with Python 3.10 and torch
 
-You can setup a virtual environment to run the code like this:
+You can setup a virtual conda environment to run the code like this:
 
 ```bash
-python3 -m venv env               # Create a virtual environment
-source env/bin/activate           # Activate virtual environment
-pip install -r requirements.txt   # Install dependencies
-echo $PWD > env/lib/python3.5/site-packages/sgan.pth  # Add current directory to python path
+conda create -n test python=3.10 -y               # Create a virtual environment
+conda activate test                               # Activate virtual environment
 # Work for a while ...
-deactivate  # Exit virtual environment
+conda deactivate  # Exit virtual environment
 ```
 
-## Pretrained Models
-You can download pretrained models by running the script `bash scripts/download_models.sh`. This will download the following models:
+## clone repo and download files
 
-- `sgan-models/<dataset_name>_<pred_len>.pt`: Contains 10 pretrained models for all five datasets. These models correspond to SGAN-20V-20 in Table 1.
-- `sgan-p-models/<dataset_name>_<pred_len>.pt`: Contains 10 pretrained models for all five datasets. These models correspond to SGAN-20VP-20 in Table 1.
+```bash
+git clone https://github.com/bharath5673/Social-GAN.git
+cd Social-GAN
+pip install -r requirements.txt   # Install dependencies
+sh scripts/download_data.sh
+sh scripts/download_models.sh
+```
 
 Please refer to [Model Zoo](MODEL_ZOO.md) for results.
 
@@ -65,9 +67,14 @@ Please refer to [Model Zoo](MODEL_ZOO.md) for results.
 You can use the script `scripts/evaluate_model.py` to easily run any of the pretrained models on any of the datsets. For example you can replicate the Table 1 results for all datasets for SGAN-20V-20 like this:
 
 ```bash
-python scripts/evaluate_model.py \
-  --model_path models/sgan-models
+cd scripts
+sh run_eval.sh
 ```
 
 ## Training new models
+
+```bash
+cd scripts
+sh run_traj.sh
+```
 Instructions for training new models can be [found here](TRAINING.md).
